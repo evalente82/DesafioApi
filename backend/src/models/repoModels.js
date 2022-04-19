@@ -1,23 +1,31 @@
 const Sequelize = require('sequelize')
 const database = require('../db')
 
-const repoModels2 = database.define('repo',{
+const repoModels = database.define('repo',{
     id:{
         type: Sequelize.INTEGER,
         autoIncrement: true,
         allowNull: false,
         primaryKey: true
     },
-    login:{
+    name:{
         type: Sequelize.STRING,
-        allowNull: false
+        allowNull: true
     },
-    html_url:{
+    description:{
         type: Sequelize.STRING,
-        allowNull: false
+        allowNull: true
+      },
+      language:{
+        type: Sequelize.STRING,
+        allowNull: true
+      },
+      html_url:{
+        type: Sequelize.STRING,
+        allowNull: true
       },
     createdAt: Sequelize.DATE,
     updatedAt: Sequelize.DATE
 })
 
-module.exports = repoModels2
+module.exports = repoModels
