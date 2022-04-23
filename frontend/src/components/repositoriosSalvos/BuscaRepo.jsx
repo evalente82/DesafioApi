@@ -1,7 +1,6 @@
 /* eslint-disable no-unused-vars */
 
 import React, {useState, useEffect}from 'react'
-import { useHistory, useLocation } from 'react-router-dom';
 import {getRepositorysTodos} from '../../services/RepositorysService'
 import RepositorysRow from './RepositorysRow'
 import {deleteRepositorysService} from '../../services/RepositorysService'
@@ -9,39 +8,45 @@ import {deleteRepositorysService} from '../../services/RepositorysService'
 function Repo(){
 
     const [repositories, setRepositories] = useState([])
+    const [fetchData, setFetchData] = useState(true);
+    const [vetor, setVetor] = useState([])
+
+    const triggerDataFetch = () => setFetchData(t => !t);
 
     useEffect(() =>{
         
         getRepositorysTodos()
-        .then(result =>{
-            setRepositories(result)
+        .then((result) =>{
+            setVetor(result)
         })
-    })
+    },[fetchData])
 
-    const [cor, setCor] = useState('blue')
-    //função para alterar a cor
-    const alteraCor = () =>{
-        setCor( cor === 'blue' ? 'gray': 'blue')
-    }
 
     function onDeleteClick(event) {
         
+        triggerDataFetch();
         const id = event.target.id.replace('delete', '')
         deleteRepositorysService(id)
-        let copiaVetor = [...repositories]
+        let copiaVetor = [...vetor]
         copiaVetor.splice(id,1)
-        setRepositories(copiaVetor)
-        ComponenteListarRepositorios(copiaVetor)
-        
+        setVetor(copiaVetor) 
     }
     
-    function ComponenteListarRepositorios(copiaVetor){
 
-        useEffect(() =>{
-                setRepositories(copiaVetor)
-            })
+    function RepoRow(props) {  
+   
+        return(
+            <tr>
+                <td >{props.data.id}</td>
+                <td >{props.data.name}</td>
+                <td>{props.data.description}</td>
+                <td>{props.data.language}</td>
+                <td><a href={props.data.html_url} target="_blank" rel="noopener noreferrer">Saiba mais</a></td>
+                <td><button type = "button" class="btn btn-danger" id = {"delete" + props.data.id} onClick={props.onClick}>Deletar</button>
+                </td>
+            </tr>
+        )
     }
-    
     
 
     return(
@@ -76,7 +81,7 @@ function Repo(){
                                         <tbody>
                                         <tr>
                                     </tr>
-                                            {repositories.map(item => <RepositorysRow key={item.id} data={item} onClick={onDeleteClick} />)}
+                                            {vetor.map(item => <RepoRow key={item.id} data={item} onClick={onDeleteClick} />)}
                                             
                                         </tbody>
                                     </div>
@@ -86,6 +91,7 @@ function Repo(){
                         </div>
                     </div>
                 </div>
+
 
 
             
